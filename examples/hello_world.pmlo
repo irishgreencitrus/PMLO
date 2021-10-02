@@ -1,0 +1,2 @@
+"Hello World" !!
+::PRINT_HELLO_WORLD -$$ jump_if_stack_not_empty:PRINT_HELLO_WORLD
