@@ -1,3 +1,6 @@
 [submodule "editor/vim"]
 	path = editor/vim
 	url = https://github.com/irishgreencitrus/PMLO-vim-syntax
+[submodule "editor/vscode"]
+	path = editor/vscode
+	url = https://github.com/irishgreencitrus/PMLO-syntax-vscode
