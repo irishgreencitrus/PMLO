@@ -1,18 +1,16 @@
 [
+    1..999
 
-1..999
+    ::IS_MULTIPLE_OF_THREE_OR_FIVE
 
-::IS_MULTIPLE_OF_THREE_OR_FIVE
+    pop_into(x)
+    3 pull_from(x) % !
+    5 pull_from(x) % !
+    ||
+    pull_from(x) *
 
-pop_into<x>
-3 pull_from<x> % !
-5 pull_from<x> % !
-||
-pull_from<x> *
-
-pop_into<0> 
-jump_if_stack_not_empty:IS_MULTIPLE_OF_THREE_OR_FIVE
-
+    pop_into(0) 
+    jump_if_stack_not_empty:IS_MULTIPLE_OF_THREE_OR_FIVE
 ]
 
 ::SUM

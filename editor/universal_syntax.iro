@@ -1,0 +1,53 @@
+// PASTE THIS INTO https://eeyo.io/iro/
+name = pmlo
+file_extensions [] = pmlo;
+contexts[] {
+   main : context {
+      : pattern {
+         regex \= (\@.*)
+         styles[] = .comment;
+      }
+      : pattern {
+         regex \= (".*")
+         styles[] = .string;
+      }
+      : pattern {
+         regex \= (\[|\])
+         styles[] = .scope;
+      }
+      : pattern {
+         regex \= (\d\.\.\d+)
+         styles[] = .number;
+      }
+      : pattern {
+         regex \= (\d+)
+         styles[] = .number;
+      }
+      : pattern {
+         regex \= (::[A-Z_]+)
+         styles[] = .label;
+      }
+      : pattern {
+         regex \= ([a-z_]+:[A-Z_]+)
+         styles[] = .label;
+      }
+      : pattern {
+         regex \= ([a-z_]+\([a-z]\))
+         styles[] = .reg_func;
+      }
+      : pattern {
+         regex \= ([a-z_]+\([0-9]\))
+         styles[] = .stack_func;
+      }
+   }
+}
+
+styles [] {
+   .number : style color = "green";
+   .string : style color = "light_green";
+   .comment : style color = "grey";
+   .scope: style color = "light_blue";
+   .label: style color = "violet";
+   .reg_func: style color = "orange";
+   .stack_func: style color = "cyan";
+}

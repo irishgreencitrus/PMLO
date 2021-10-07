@@ -1,0 +1,19 @@
+@ Generates the first 50 Fibonnaci numbers
+@ Currently the value is hardcoded but that may change in the future.
+@ Idea for register syntax 0..(n) / (a)..10 / (a)..(n)
+
+0  pop_into(a) @ TERM ONE
+1  pop_into(b) @ TERM TWO
+0  pop_into(x) @ VALUE
+[
+    0..50
+::FIB
+    +
+    pull_from(x) pop_into(0)
+    pull_from(b) pop_into(a)
+    pull_from(x) pop_into(b)
+    pull_from(a) pull_from(b) + pop_into(x)
+jump_if_stack_not_one:FIB
+    pop_into(t) @ Remove last value as it is garbage.
+]
+!! $!

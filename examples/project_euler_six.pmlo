@@ -1,20 +1,20 @@
-2 pop_into<a>
+2 pop_into(a)
 
 [
-		1..100
-		::CALC_SQUARES
-		pop_into<x> pull_from<a> pull_from<x> pow pop_into<0>
-		jump_if_stack_not_empty:CALC_SQUARES
+	1..100
+	::CALC_SQUARES
+	pop_into(x) pull_from(a) pull_from(a) pow pop_into(0)
+	jump_if_stack_not_empty:CALC_SQUARES
 ]
 @ Summing Stack Up
 ::SUM_OF_SQUARES
 +
 jump_if_stack_not_one:SUM_OF_SQUARES
 [
-		1..100
-		::CALC_SUM
-		+
-		jump_if_stack_not_one:CALC_SUM
-		pop_into<x> pull_from<a> pull_from<x> pow
+	1..100
+	::CALC_SUM
+	+
+	jump_if_stack_not_one:CALC_SUM
+	pop_into(x) pull_from(a) pull_from(x) pow
 ]
 - $!

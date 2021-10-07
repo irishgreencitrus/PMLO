@@ -15,8 +15,6 @@
     #define NOCOLOUR
 #endif
 
-
-
 //PMLO Fatal Error
 void PMLO_Fatal(char* reason) {
 #ifndef NOCOLOUR
@@ -36,37 +34,25 @@ typedef struct PMLO_Stack {
     uint16_t stack_size;
     int32_t top;
 } PMLO_Stack;
-
 void PMLO_Stack_new(PMLO_Stack *s) {
     s->top = -1;
     s->stack_size = 0;
 }
 
 // Core functions
-
-uint8_t PMLO_Stack_core_isFull(PMLO_Stack *s) {
-    return s->top == MAX_STACK_SIZE - 1;
-}
-
-uint8_t PMLO_Stack_core_isEmpty(PMLO_Stack *s) {
-    return s->top == -1;
-}
-
 uint8_t PMLO_Stack_core_isLength(PMLO_Stack *s,STACK_DATA_TYPE len) {
     return s->top == (len - 1);
 }
-
 void PMLO_Stack_core_push(PMLO_Stack *s, STACK_DATA_TYPE newItem) {
-    if (PMLO_Stack_core_isFull(s)) {
+    if (PMLO_Stack_core_isLength(s,MAX_STACK_SIZE)) {
         PMLO_Fatal("Stack is full: can't push any more items.");
     }
     s->top++;
     s->items[s->top] = newItem;
     s->stack_size++;
 }
-
 STACK_DATA_TYPE PMLO_Stack_core_pop(PMLO_Stack *s) {
-    if (PMLO_Stack_core_isEmpty(s)) {
+    if (PMLO_Stack_core_isLength(s,0)) {
         PMLO_Fatal("Stack is empty: can't be popped.");
     }
     STACK_DATA_TYPE tmp = s->items[s->top];
@@ -75,7 +61,7 @@ STACK_DATA_TYPE PMLO_Stack_core_pop(PMLO_Stack *s) {
     return tmp;
 }
 STACK_DATA_TYPE PMLO_Stack_core_getTop(PMLO_Stack *s) {
-    if (PMLO_Stack_core_isEmpty(s)) {
+    if (PMLO_Stack_core_isLength(s,0)) {
         PMLO_Fatal("Stack is empty: can't get top value.");
     }
     return s->items[s->top];
@@ -94,16 +80,26 @@ void PMLO_Stack_core_reverse(PMLO_Stack *s) {
 }
 void PMLO_Stack_core_append(PMLO_Stack *s1, PMLO_Stack *s_to_append) {
     PMLO_Stack_core_reverse(s_to_append);
-    while (!PMLO_Stack_core_isEmpty(s_to_append)) {
+    while (!PMLO_Stack_core_isLength(s_to_append,0)) {
         PMLO_Stack_core_push(s1, PMLO_Stack_core_pop(s_to_append));
     }
 }
 // End base functions
 
 
-
-
 // Output functions
+void PMLO_Stack_output_dumpVal(PMLO_Stack *s){
+    printf(STACK_DATA_TYPE_FORMATTER"\n",PMLO_Stack_core_getTop(s));
+}
+void PMLO_Stack_output_dumpValStr(PMLO_Stack *s){
+    putchar(PMLO_Stack_core_getTop(s));
+}
+void PMLO_Stack_output_dumpValDestr(PMLO_Stack *s){
+    printf(STACK_DATA_TYPE_FORMATTER"\n",PMLO_Stack_core_pop(s));
+}
+void PMLO_Stack_output_dumpValStrDestr(PMLO_Stack *s){
+    putchar(PMLO_Stack_core_pop(s));
+}
 void PMLO_Stack_output_dumpStack(PMLO_Stack *s) {
     printf("[");
     for (int i = s->stack_size - 1; i > -1; i--) {
@@ -114,21 +110,6 @@ void PMLO_Stack_output_dumpStack(PMLO_Stack *s) {
     }
     printf("]\n");
 }
-
-void PMLO_Stack_output_dumpVal(PMLO_Stack *s){
-    printf(STACK_DATA_TYPE_FORMATTER"\n",PMLO_Stack_core_getTop(s));
-}
-void PMLO_Stack_output_dumpValStr(PMLO_Stack *s){
-    putchar(PMLO_Stack_core_getTop(s));
-}
-
-void PMLO_Stack_output_dumpValDestr(PMLO_Stack *s){
-    printf(STACK_DATA_TYPE_FORMATTER"\n",PMLO_Stack_core_pop(s));
-}
-void PMLO_Stack_output_dumpValStrDestr(PMLO_Stack *s){
-    putchar(PMLO_Stack_core_pop(s));
-}
-
 void PMLO_Stack_output_dumpStackStr(PMLO_Stack *s) {
     for (int i = s->stack_size - 1; i > -1; i--) {
         putchar(PMLO_Stack_core_getTop(s));
@@ -189,7 +170,6 @@ void PMLO_Stack_bool_or(PMLO_Stack *s){
     STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
     PMLO_Stack_core_push(s,(a||b));
 }
-
 void PMLO_Stack_bool_and(PMLO_Stack *s){
     STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
     STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
@@ -200,5 +180,70 @@ void PMLO_Stack_bool_not(PMLO_Stack *s){
     PMLO_Stack_core_push(s,(!a));
 }
 // End boolean operators
+
+// Start equality operators
+void PMLO_Stack_equality_eq(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a == b));
+}
+void PMLO_Stack_equality_neq(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a != b));
+}
+void PMLO_Stack_equality_gt(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a > b));
+}
+void PMLO_Stack_equality_lt(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a < b));
+}
+void PMLO_Stack_equality_gt_eq(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a >= b));
+}
+void PMLO_Stack_equality_lt_eq(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    STACK_DATA_TYPE b = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a <= b));
+}
+// End equality operators
+
+// Start bitwise operators
+void PMLO_Stack_bitwise_not(PMLO_Stack *s){
+    STACK_DATA_TYPE a = PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,~(STACK_INT_DATA_TYPE)(a));
+}
+void PMLO_Stack_bitwise_and(PMLO_Stack *s){
+    STACK_INT_DATA_TYPE a = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    STACK_INT_DATA_TYPE b = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a & b));
+}
+void PMLO_Stack_bitwise_or(PMLO_Stack *s){
+    STACK_INT_DATA_TYPE a = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    STACK_INT_DATA_TYPE b = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a | b));
+}
+void PMLO_Stack_bitwise_xor(PMLO_Stack *s){
+    STACK_INT_DATA_TYPE a = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    STACK_INT_DATA_TYPE b = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a ^ b));
+}
+void PMLO_Stack_bitwise_lshift(PMLO_Stack *s){
+    STACK_INT_DATA_TYPE a = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    STACK_INT_DATA_TYPE b = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a << b));
+}
+void PMLO_Stack_bitwise_rshift(PMLO_Stack *s){
+    STACK_INT_DATA_TYPE a = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    STACK_INT_DATA_TYPE b = (STACK_INT_DATA_TYPE)PMLO_Stack_core_pop(s);
+    PMLO_Stack_core_push(s,(a >> b));
+}
+// End bitwise operators
 
 // START MAIN

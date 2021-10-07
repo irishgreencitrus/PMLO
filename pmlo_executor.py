@@ -12,7 +12,7 @@ class PMLOExec:
         self.code_pointer = 0
         self.registers = {}
         self.builtin_functions = {
-            # Mathematical operators
+            # Mathematical operators TODO(lime) require include
             "+": self._pmlo_add,
             "-": self._pmlo_subtract,
             "*": self._pmlo_multiply,
@@ -27,7 +27,7 @@ class PMLOExec:
             "!!": self._pmlo_stack_revr,
             # End base functions
 
-            # Output functions
+            # Output functions TODO(lime) require include
             "$": self._pmlo_value_dump,
             "-$": self._pmlo_value_dump_destr,
             "$$": self._pmlo_value_dump_str,
@@ -36,14 +36,32 @@ class PMLOExec:
             "$$!": self._pmlo_stack_dump_str,
             # End output functions
 
-            "/$": self._pmlo_number_input,  # Input function
+            "/$": self._pmlo_number_input,  # Input function TODO(lime) require include
             # TODO(lime) add string input functions
 
-            # Boolean operators
+            # Boolean operators TODO(lime) require include
             "||": self._pmlo_boolean_or,
             "&&": self._pmlo_boolean_and,
             "!": self._pmlo_boolean_not,
             # End boolean operators
+
+            # Equality operators TODO(lime) require include
+            "==": self._pmlo_equality_eq,
+            "!=": self._pmlo_equality_neq,
+            ">": self._pmlo_equality_gt,
+            "<": self._pmlo_equality_lt,
+            ">=": self._pmlo_equality_gt_eq,
+            "<=": self._pmlo_equality_lt_eq,
+            # End equality operators
+
+            # Bitwise operators TODO(lime) require include
+            "~": self._pmlo_bitwise_not,
+            "&": self._pmlo_bitwise_and,
+            "|": self._pmlo_bitwise_or,
+            "^": self._pmlo_bitwise_xor,
+            "<<": self._pmlo_bitwise_lshift,
+            ">>": self._pmlo_bitwise_rshift,
+            # End bitwise operators.
         }
 
     def _pmlo_find_labels(self):
@@ -112,8 +130,8 @@ class PMLOExec:
                     self.code_pointer = label_location
 
         elif token.type == "REGISTER_FUNCTION":
-            fn = token.value.split("<")[0]
-            register = token.value.split("<")[1].strip(">")
+            fn = token.value.split("(")[0]
+            register = token.value.split("(")[1].strip(")")
             if fn == "pop_into":
                 self.registers[register] = self.stacks[self.stack_pointer].pop()
             elif fn == "copy_into":
@@ -124,8 +142,8 @@ class PMLOExec:
                 print(self.registers[register])
 
         elif token.type == "STACK_FUNCTION":
-            fn = token.value.split("<")[0]
-            stack = int(token.value.split("<")[1].strip(">"))
+            fn = token.value.split("(")[0]
+            stack = int(token.value.split("(")[1].strip(")"))
             if fn == "pop_into":
                 self.stacks[stack].append(self.stacks[self.stack_pointer].pop())
             elif fn == "copy_into":
@@ -222,3 +240,62 @@ class PMLOExec:
     def _pmlo_boolean_not(self):
         a = bool(self.stacks[self.stack_pointer].pop())
         self.stacks[self.stack_pointer].append(int(not a))
+
+    def _pmlo_equality_eq(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a == b))
+    
+    def _pmlo_equality_neq(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a != b))
+
+    def _pmlo_equality_gt(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a > b))
+    
+    def _pmlo_equality_lt(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a < b))
+
+    def _pmlo_equality_gt_eq(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a >= b))
+    
+    def _pmlo_equality_lt_eq(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(int(a <= b))
+    
+    def _pmlo_bitwise_not(self):
+        a = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(~a)
+    
+    def _pmlo_bitwise_and(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(a & b)
+    
+    def _pmlo_bitwise_or(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(a | b)
+
+    def _pmlo_bitwise_xor(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(a ^ b)
+
+    def _pmlo_bitwise_lshift(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(a << b)
+
+    def _pmlo_bitwise_rshift(self):
+        a = self.stacks[self.stack_pointer].pop()
+        b = self.stacks[self.stack_pointer].pop()
+        self.stacks[self.stack_pointer].append(a >> b)

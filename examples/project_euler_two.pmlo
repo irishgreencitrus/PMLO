@@ -1,0 +1,35 @@
+@ Generates the first 50 Fibonnaci numbers
+@ Currently the value is hardcoded but that may change in the future.
+@ Idea for register syntax 0..(n) / (a)..10 / (a)..(n)
+4000000 pop_into(i)
+0  pop_into(a) @ TERM ONE
+1  pop_into(b) @ TERM TWO
+0  pop_into(x) @ VALUE
+[
+    0
+::FIB
+    pop_into(t)
+    pull_from(x) pop_into(0)
+    pull_from(b) pop_into(a)
+    pull_from(x) pop_into(b)
+    pull_from(a) pull_from(b) + pop_into(x)
+
+    pull_from(i) pull_from(x) > 
+jump_if_zero:FIB
+    pop_into(t) @ Remove last value as it is garbage.
+]
+!! $! !!
+
+[
+    0
+::IS_EVEN
+    pop_into(t) 
+    pull_from(0) pop_into(f) 2 pull_from(f) % 1 == pull_from(f) *
+    pull_from(f) 1 == 
+jump_if_zero:IS_EVEN
+    pop_into(t)
+]
+::CALC_SUM
++
+jump_if_stack_not_one:CALC_SUM
+$!
